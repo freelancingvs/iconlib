@@ -17,8 +17,8 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-const UPLOADS_DIR = "uploads";
-const DATA_DIR = "data";
+const UPLOADS_DIR = process.env.VERCEL ? "/tmp/uploads" : "uploads";
+const DATA_DIR = process.env.VERCEL ? "/tmp/data" : "data";
 const ICONS_DIR = path.join(DATA_DIR, "icons");
 const DB_PATH = path.join(DATA_DIR, "icons.json");
 
