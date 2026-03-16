@@ -742,13 +742,13 @@
         <div class="icon-name">${safeName}</div>
         <div class="icon-tags">${safeTags}</div>
         <div class="icon-actions">
-          <button class="icon-action-btn" onclick="copyIcon(${icon.id}, event)" title="Copy SVG">
+          <button class="icon-action-btn" onclick="copyIcon('${icon.id}', event)" title="Copy SVG">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
-          <button class="icon-action-btn" onclick="downloadIcon(${icon.id}, event)" title="Download">
+          <button class="icon-action-btn" onclick="downloadIcon('${icon.id}', event)" title="Download">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           </button>
-          <button class="icon-action-btn delete" onclick="deleteIcon(${icon.id}, event)" title="Delete">
+          <button class="icon-action-btn delete" onclick="deleteIcon('${icon.id}', event)" title="Delete">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
           </button>
         </div>
