@@ -91,7 +91,7 @@ if (fs.existsSync(DB_PATH)) {
 
   // Also physically write default SVGs
   iconsDB.forEach(icon => {
-    fs.writeFileSync(path.join(ICONS_DIR, \`\${icon.id}.svg\`), icon.svg_code);
+    fs.writeFileSync(path.join(ICONS_DIR, `${icon.id}.svg`), icon.svg_code);
   });
 }
 
