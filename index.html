@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SVGLIB — Icon Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface2: #1a1a1a;
+      --border: #222222;
+      --accent: #e8ff47;
+      --accent2: #ff6b35;
+      --text: #f0f0f0;
+      --text-muted: #666;
+      --radius: 4px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.3;
+    }
+
+    /* HEADER */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .header-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* MAIN LAYOUT */
+    .layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      min-height: calc(100vh - 64px);
+    }
+
+    /* SIDEBAR */
+    aside {
+      border-right: 1px solid var(--border);
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      position: sticky;
+      top: 64px;
+      height: calc(100vh - 64px);
+      overflow-y: auto;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    /* SEARCH */
+    .search-wrapper {
+      position: relative;
+      width: 250px;
+    }
+
+    .search-wrapper input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      padding: 10px 14px 10px 36px;
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-wrapper input:focus {
+      border-color: var(--accent);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* UPLOAD FORM */
+    .upload-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .upload-form input[type="text"] {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      padding: 9px 12px;
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+
+    .upload-form input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    .file-drop {
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+    }
+
+    .file-drop:hover, .file-drop.dragover {
+      border-color: var(--accent);
+      background: rgba(232, 255, 71, 0.03);
+      color: var(--accent);
+    }
+
+    .file-drop input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .file-drop-icon {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+
+    .btn {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      border: none;
+      cursor: pointer;
+      padding: 10px 16px;
+      border-radius: var(--radius);
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      background: #d4e83e;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      background: var(--accent);
+      color: #000;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 9998;
+      pointer-events: none;
+    }
+
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    #toast.error {
+      background: var(--accent2);
+      color: #fff;
+    }
+
+    /* MAIN CONTENT */
+    main {
+      padding: 32px 40px;
+    }
+
+    .content-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .header-right-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .icon-count {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .icon-count span {
+      color: var(--accent);
+    }
+
+    .view-toggle {
+      display: flex;
+      gap: 2px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 3px;
+    }
+
+    .view-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 6px 10px;
+      border-radius: 2px;
+      transition: all 0.15s;
+      font-size: 0.8rem;
+    }
+
+    .view-btn.active {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    /* ICON GRID */
+    #icons-grid {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+
+    #icons-grid.list-view {
+      grid-template-columns: 1fr;
+    }
+
+    /* ICON CARD */
+    .icon-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+      group: true;
+      animation: fadeIn 0.3s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .icon-card:hover {
+      border-color: var(--accent);
+      background: var(--surface2);
+      z-index: 1;
+    }
+
+    .icon-card:hover .icon-actions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .icon-preview {
+      width: 64px;
+      height: 64px;
+      color: var(--text);
+      transition: color 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-card:hover .icon-preview {
+      color: var(--accent);
+    }
+
+    .icon-preview svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .icon-name {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      text-align: center;
+    }
+
+    .icon-actions {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all 0.15s;
+    }
+
+    .icon-action-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 36px;
+      height: 36px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.1s;
+      padding: 0;
+    }
+
+    .icon-action-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .icon-action-btn.delete:hover { color: #ff4444; border-color: #ff4444; }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 32px;
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 400px;
+      transform: translateY(20px);
+      transition: all 0.2s;
+    }
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+    .modal-content h3 {
+      font-family: 'Syne', sans-serif;
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+    }
+    .modal-content p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    .btn-delete {
+      background: #ff4444;
+      color: white;
+      font-weight: 700;
+      padding: 10px 16px;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      transition: all 0.15s;
+    }
+    .btn-delete:hover { background: #ff2222; transform: translateY(-1px); }
+
+    /* LIST VIEW */
+    .list-view .icon-card {
+      flex-direction: row;
+      padding: 12px 16px;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .list-view .icon-preview {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+    }
+
+    .list-view .icon-name {
+      text-align: left;
+      flex: 1;
+    }
+
+    .list-view .icon-tags {
+      display: block;
+    }
+
+    .icon-tags {
+      display: none;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      flex: 1;
+    }
+
+    .list-view .icon-actions {
+      position: static;
+      opacity: 1;
+      transform: none;
+      margin-left: auto;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+
+    .empty-state p { font-size: 0.8rem; line-height: 1.6; }
+
+    /* Loading */
+    .loading {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* Upload progress */
+    .upload-progress {
+      height: 2px;
+      background: var(--border);
+      border-radius: 1px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .upload-progress.active { display: block; }
+
+    .upload-progress-bar {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .filename-display {
+      font-size: 0.65rem;
+      color: var(--accent);
+      text-align: center;
+      margin-top: -4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+      main { padding: 20px; }
+      header { padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    SVGLIB
+  </div>
+  <div class="header-meta">ICON MANAGEMENT SYSTEM</div>
+</header>
+
+<div class="layout">
+  <aside>
+
+
+    <!-- Upload -->
+    <div>
+      <div class="section-label">Upload Icon</div>
+      <form class="upload-form" id="uploadForm">
+        <div class="file-drop" id="file-drop">
+          <input type="file" name="icon" id="icon-file" accept="image/svg+xml,.svg" required />
+          <div class="file-drop-icon">⊕</div>
+          <div>drop .svg here</div>
+        </div>
+        <div class="filename-display" id="filename-display"></div>
+        <input type="text" name="tags" id="icon-tags" placeholder="tags, comma, separated" required autocomplete="off" />
+        <input type="text" name="name" id="icon-name" placeholder="icon name" required autocomplete="off" />
+        <div class="upload-progress" id="upload-progress">
+          <div class="upload-progress-bar" id="progress-bar"></div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="upload-btn">UPLOAD ICON</button>
+      </form>
+    </div>
+  </aside>
+
+  <main>
+    <div class="content-header">
+      <div>
+        <div class="section-label">Library</div>
+        <div class="icon-count"><span id="count">0</span> icons</div>
+      </div>
+      <div class="header-right-actions">
+        <div class="search-wrapper">
+          <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" id="search-input" placeholder="name, tag..." />
+        </div>
+        <div class="view-toggle">
+          <button class="view-btn active" id="grid-view-btn" title="Grid view" onclick="setView('grid')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          </button>
+          <button class="view-btn" id="list-view-btn" title="List view" onclick="setView('list')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="icons-grid"></div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<!-- Delete Modal -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal-content">
+    <h3>Delete Icon</h3>
+    <p>Are you sure you want to delete "<span id="delete-icon-name"></span>"?</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-delete" id="confirm-delete-btn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentView = 'grid';
+  let allIcons = [];
+  let searchTimeout;
+
+  // Toast notifications
+  function toast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = type === 'error' ? 'error' : '';
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2500);
+  }
+
+  // View toggle
+  function setView(v) {
+    currentView = v;
+    const grid = document.getElementById('icons-grid');
+    const gBtn = document.getElementById('grid-view-btn');
+    const lBtn = document.getElementById('list-view-btn');
+    if (v === 'list') {
+      grid.classList.add('list-view');
+      lBtn.classList.add('active');
+      gBtn.classList.remove('active');
+    } else {
+      grid.classList.remove('list-view');
+      gBtn.classList.add('active');
+      lBtn.classList.remove('active');
+    }
+  }
+
+  // Load icons
+  async function loadIcons(search = '') {
+    const grid = document.getElementById('icons-grid');
+    grid.innerHTML = `<div class="loading"><div class="spinner"></div> Loading...</div>`;
+
+    try {
+      const res = await fetch('/icons?search=' + encodeURIComponent(search));
+      allIcons = await res.json();
+      renderIcons(allIcons);
+    } catch (err) {
+      grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠</div><p>Failed to load icons.<br/>Is the server running?</p></div>`;
+    }
+  }
+
+  function renderIcons(icons) {
+    const grid = document.getElementById('icons-grid');
+    document.getElementById('count').textContent = icons.length;
+
+    if (icons.length === 0) {
+      grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">◎</div><p>No icons found.<br/>Upload your first SVG to get started.</p></div>`;
+      return;
+    }
+
+    grid.innerHTML = '';
+    icons.forEach((icon, i) => {
+      const div = document.createElement('div');
+      div.className = 'icon-card';
+      div.style.animationDelay = `${i * 20}ms`;
+
+      const safeName = icon.name.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const safeTags = icon.tags ? icon.tags.replace(/</g, '&lt;') : '';
+
+      div.innerHTML = `
+        <div class="icon-preview">${icon.svg_code}</div>
+        <div class="icon-name">${safeName}</div>
+        <div class="icon-tags">${safeTags}</div>
+        <div class="icon-actions">
+          <button class="icon-action-btn" onclick="copyIcon(${icon.id}, event)" title="Copy SVG">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+          <button class="icon-action-btn" onclick="downloadIcon(${icon.id}, event)" title="Download">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+          <button class="icon-action-btn delete" onclick="deleteIcon(${icon.id}, event)" title="Delete">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          </button>
+        </div>
+      `;
+      grid.appendChild(div);
+    });
+  }
+
+  function getIcon(id) {
+    return allIcons.find(i => i.id === id);
+  }
+
+  async function copyIcon(id, e) {
+    e && e.stopPropagation();
+    const icon = getIcon(id);
+    if (!icon) return;
+    try {
+      await navigator.clipboard.writeText(icon.svg_code);
+      toast('✓ SVG copied to clipboard');
+    } catch {
+      toast('Copy failed — try again', 'error');
+    }
+  }
+
+  function downloadIcon(id, e) {
+    e && e.stopPropagation();
+    const icon = getIcon(id);
+    if (!icon) return;
+    
+    let svgContent = icon.svg_code;
+    if (!svgContent.includes('xmlns=')) {
+      svgContent = svgContent.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+    }
+    
+    const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const safeName = icon.name.replace(/[^a-z0-9_-]/gi, '_');
+    a.download = safeName + '.svg';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast(`↓ Downloading ${safeName}.svg`);
+  }
+
+  let iconToDelete = null;
+
+  function deleteIcon(id, e) {
+    e && e.stopPropagation();
+    const icon = getIcon(id);
+    if (!icon) return;
+    iconToDelete = id;
+    document.getElementById('delete-icon-name').textContent = icon.name;
+    document.getElementById('delete-modal').classList.add('active');
+  }
+
+  function closeDeleteModal() {
+    iconToDelete = null;
+    document.getElementById('delete-modal').classList.remove('active');
+  }
+
+  document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+    if (!iconToDelete) return;
+    const id = iconToDelete;
+    closeDeleteModal();
+    await fetch('/icons/' + id, { method: 'DELETE' });
+    toast('Icon deleted');
+    loadIcons(document.getElementById('search-input')?.value || '');
+  });
+
+  // Search
+  document.getElementById('search-input').addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => loadIcons(e.target.value), 200);
+  });
+
+  // File drop visual
+  const fileDrop = document.getElementById('file-drop');
+  const fileInput = document.getElementById('icon-file');
+
+  fileDrop.addEventListener('dragover', (e) => { e.preventDefault(); fileDrop.classList.add('dragover'); });
+  fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('dragover'));
+  fileDrop.addEventListener('drop', (e) => {
+    e.preventDefault();
+    fileDrop.classList.remove('dragover');
+    if (e.dataTransfer.files[0]) {
+      fileInput.files = e.dataTransfer.files;
+      updateFilename(e.dataTransfer.files[0].name);
+    }
+  });
+
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files[0]) updateFilename(e.target.files[0].name);
+  });
+
+  function updateFilename(name) {
+    const display = document.getElementById('filename-display');
+    display.textContent = '✓ ' + name;
+    // Auto-fill name field if empty
+    const nameInput = document.getElementById('icon-name');
+    if (!nameInput.value) {
+      nameInput.value = name.replace('.svg', '').replace(/[-_]/g, ' ');
+    }
+  }
+
+  // Upload form
+  document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('upload-btn');
+    const progress = document.getElementById('upload-progress');
+    const bar = document.getElementById('progress-bar');
+
+    btn.disabled = true;
+    btn.textContent = 'UPLOADING...';
+    progress.classList.add('active');
+    bar.style.width = '30%';
+
+    try {
+      const formData = new FormData(e.target);
+      bar.style.width = '70%';
+      const res = await fetch('/upload', { method: 'POST', body: formData });
+      bar.style.width = '100%';
+      const data = await res.json();
+
+      if (data.success) {
+        toast('✓ Icon uploaded successfully');
+        e.target.reset();
+        document.getElementById('filename-display').textContent = '';
+        loadIcons();
+      } else {
+        toast(data.error || 'Upload failed', 'error');
+      }
+    } catch (err) {
+      toast('Upload failed — server error', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'UPLOAD ICON';
+      setTimeout(() => {
+        progress.classList.remove('active');
+        bar.style.width = '0%';
+      }, 500);
+    }
+  });
+
+  // Init
+  loadIcons();
+</script>
+</body>
+</html>
