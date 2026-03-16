@@ -18,13 +18,16 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
+const UPLOADS_DIR = process.env.VERCEL ? "/tmp/uploads" : "uploads";
 // Ensure uploads directory exists
-if (!fs.existsSync("uploads")) fs.mkdirSync("uploads");
+if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ dest: UPLOADS_DIR });
+
+const DB_PATH = process.env.VERCEL ? "/tmp/icons.db" : path.join(__dirname, "icons.db");
 
 const db = await open({
-  filename: path.join(__dirname, "icons.db"),
+  filename: DB_PATH,
   driver: sqlite3.Database,
 });
 
@@ -132,4 +135,8 @@ app.delete("/icons/:id", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✦ SVG Icon Library running on http://localhost:${PORT}`));
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => console.log(`✦ SVG Icon Library running on http://localhost:${PORT}`));
+}
+
+export default app;
